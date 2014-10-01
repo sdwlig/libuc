@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+  UniversalContainer library.
+  Copyright Jason Denton, 2012.
+  Made available under the new BSD license.
+ 
+  Send comments and bug reports to jason.denton@gmail.com
+  http://www.greatpanic.com/code.html
+-->
+<html>
+<head>
+<title>Extending UniversalContainer</title>
+<link media="screen" rel="stylesheet" type="text/css" href="proglib.css"/>
+</head>
+<body><div class="main">
+<h1>Extending UniversalContainer</h1>
+
+<h2>Overview</h2>
+<p>Consider the problem of enabling UniversalContainer to hold a new data type.
+Deriving a new child class has the advantage that the casting and assignment operators
+can be overridden to understand the new type. But in practice this proves tricky,
+since the new class must know when to handle the new type, and when to delegate back
+to the parent to handle previously understood types. And consider what happens when
+two children, possibly from different sources, add support for two new types,
+but the need is for one type that can contain everything of interest. Instead,
+UniversalContainer takes another approach, and allows for extension to registered.
+By making the addition of new types orthogonal to the class itself, multiple types
+can be added independent of each other.</p>
+
+<p>UniversalContainer provides a special constructor which allows it to hold
+an arbitrary reference (a void*), with a designated type attached. Before
+this constructor is used, however, the new type must be registered by with
+an instance of a class called UniversalContainerTypeAdaptor. A second
+method, cast_or_throw, allows for that reference to be retrieved in a type safe
+way. To enable UniversalContainer to understand new types, you must first
+provide a new concrete implementation of UniversalContainerTypeAdapter.
+Second, register an instance of this class using the provide static
+registration function to get a new type id. Then, use this type id
+to add and retrieve values of the new type from a UniversalContainer.
+The registered UniversalContainerTypeAdapter will handle memory
+management, cloning, and string conversion for your type.</p>
+
+<p>In practice, there are a number of tricks that can be used
+to make using UniversalContainer with your newly supported type
+easier. It is highly recommended that you look at the code
+in the file example_adapter.cpp, and base your new adapter type
+off that code. You can also look at buffer_adapter.cpp for
+a complete example.</p>
+
+<h2>Using UniversalContainer With New Types</h2>
+<p>The downside of extending UniversalContainer in this manner
+is that the casting and assignment operators can not be
+overloaded to accept understand the new type. In practice,
+this can be dealt with by creating an overloaded assign and
+cast functions that do the work of casting and assigning values
+to a UniversalContainer. The example file gives an example
+of how to do this.</p>
+
+<h2>UniversalContainerTypeAdapter</h2>
+
+<p>UniversalContainerTypeAdapter is an abstract class
+  declared in ucontainer.h. Instances of this class
+  are responsible for adapting UniversalContainer to
+  understand new reference types. When UniversalContainer
+  is holding a reference to a type it does not understand
+  natively, it will invoked the registered adapter to
+  handle various tasks. The reference in question will
+  always be sent as the ptr parameter.
+</p>
+
+<h2 class="include">#include "ucontainer.h"</h2>
+<div class="code_example">
+<pre>
+  struct UniversalContainerTypeAdapter {
+    virtual std::string to_string(void*) = 0;  
+    virtual void* clone(void*) = 0;
+    virtual void on_delete(void*) = 0;
+    virtual std::string to_json(void*) = 0;
+
+    virtual ~UniversalContainerTypeAdapter(void) {}
+  };
+</pre>
+</div>
+
+<div class="method_div">
+  <h3 class="method">virtual ~UniversalContainerTypeAdapter(void)</h3>
+  <p>Since most (virtually all) UniversalContainerTypeAdapters will
+  	not have state, the default empty implementation of this method
+  	should suffice. But if your implementation has state, this is the
+    place to clean up. Note that this method will only be invoked
+    when the program terminates.</p>
+ </div>
+
+<div class="method_div">
+  <h3 class="method">virtual std::string to_string(void* ptr)</h3>
+  <p>This is the method that will eventually be invoked when to_string
+  	is called on a UniversalContainer holding an adapted type. It should 
+  	return a string representing the data pointed to by ptr in string form.</p>
+ </div>
+
+ <div class="method_div">
+  <h3 class="method">virtual void* clone(void* ptr)</h3>
+  <p>This the method that is invoked when a container holding the adapted type
+  	is cloned. You should return a pointer to a new but identical copy of
+  	the data reference by ptr. The returned reference will be owned by the
+  	UniversalContainer that holds the clone.</p>
+ </div>
+
+ <div class="method_div">
+  <h3 class="method">virtual void on_delete(void* ptr)</h3>
+  <p>UniversalContainer does reference counting when passing or copying
+  	a container. When the last UniversalContainer holding a particular reference
+  	of the adapted type is deleted, this method will be invoked to cleanup the reference.
+  	This method should delete or free ptr as appropriate.</p>
+ </div>
+
+ <div class="method_div">
+  <h3 class="method">virtual std::string to_json(void* ptr)</h3>
+  <p>The JSON encoder will invoke this method when it encounters an
+  	adapted typed. It should return a string with the JSON representation
+  	of the object referenced by ptr. Note that UniversalContainer already
+  	understands everything that can normally be placed into a json object,
+  	and no mechanism is provided to extend the JSON parser to decode new types.
+    The provided default version of this method just returns the string NULL,
+    which will not break standard JSON parsers and should be suitable in cases
+    where an object has no JSON representation.</p>
+ </div>

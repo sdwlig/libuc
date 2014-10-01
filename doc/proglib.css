@@ -1,0 +1,139 @@
+* {
+	text-align: justify;
+	font-size: 12pt;
+	font-family:sans-serif;
+	margin-bottom: -3px;
+}
+
+body {
+	width: 8in;
+	margin: auto;
+	text-align: center;
+	background-color: gray;
+	float: center;
+
+}
+
+.main {
+	float: left;
+	padding-left: .25in;
+	padding-right: .25in;
+	background-color: white;
+}
+
+h1 {
+	background-color: orange;
+	color: white;
+	font-size: x-large;
+	margin-bottom: -3px;
+}
+
+h2 {
+	color : #78A22F;
+	font-size: large;
+	margin-bottom: -3px;
+}
+
+h3 {
+	margin-bottom: -3px;
+	font-size: normal;
+	font-weight: bold;
+}
+
+th {
+	background-color: gray;
+	text-align: center;
+	font-family:sans-serif;
+}
+
+td {
+	padding: 3px;
+	text-align: justify;
+	font-family:sans-serif;
+}
+
+ul,ol {
+	margin-left: -10px;
+}
+
+h3.method {
+	color: #610cff;
+	font-size: 10pt;
+	font-family: inconsolata, "Courier New", Courier, Monaco, monospace;
+	margin-bottom: -5px;
+}
+
+h3.user_method {
+	color: green;
+	font-size: 10pt;
+	font-family: inconsolata, "Courier New", Courier, Monaco, monospace;
+	margin-bottom: -5px;
+}
+
+h3.macro {
+	color: #0b91ff;
+	font-size: 10pt;
+	font-family: inconsolata, "Courier New", Courier, Monaco, monospace;
+	margin-bottom: -5px;
+}
+
+div.method_div {
+	border-top-style: ridge;
+	margin-left: 3px;
+	margin-bottom: 3px;
+	margin-right: 3px;
+	margin-top: 10px;
+}
+
+h2 {
+	color: #050caf;
+	font-family: Helvetica, Verdana, Arial, sans-serif;
+}
+
+h2.include {
+	font-size: larger;
+	font-family: "Courier New", Courier, Monaco, monospace;
+	color: #610cff;
+}
+
+div.code_example {
+	background-color: #444444;
+	color: white;
+}
+
+h4.parameter {
+	font-weight: bold;
+}
+
+table.param_block {
+	background-color: #444444;
+	color: white;
+	text-align: left;
+	border-spacing: 16px 0px;
+	margin-left: 16px;
+	margin-bottom: 3px;
+	margin-right: 16px;
+	margin-top: 8px;
+	width: 600px;
+}
+
+table.dictionary {
+	background-color: #444444;
+	color: white;
+	text-align: left;
+	border-spacing: 16px 0px;
+	margin-left: 16px;
+	margin-bottom: 3px;
+	margin-right: 16px;
+	margin-top: 8px;
+	width: 600px;
+}
+
+td.param {
+	font-style: italic;
+	vertical-align: top;
+}
+
+em.warning {
+    color: purple;
+}
